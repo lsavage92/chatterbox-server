@@ -1,0 +1,22 @@
+[
+  {
+    "username": "test",
+    "text": "A message"
+  },
+  {
+    "username": "someOtherUser",
+    "text": "Another Message"
+  },
+  {
+    "username": "Luke",
+    "text": "A different message"
+  },
+  {
+    "username": "David",
+    "text": "Hello world!!"
+  },
+  {
+    "username": "Random Bear",
+    "text": "Rawr"
+  }
+]
