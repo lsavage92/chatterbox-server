@@ -1,7 +1,13 @@
-var express = require("express");
 var fs = require("fs");
 var path = require("path");
+var _ = require("lodash");
+var express = require("express");
+var bodyParser = require("body-parser");
 var app = express();
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
 var headers = {
   "access-control-allow-origin": "*",
   "access-control-allow-methods": "GET, POST, PUT, DELETE, OPTIONS",
@@ -9,20 +15,42 @@ var headers = {
   "access-control-max-age": 10 // Seconds.
 };
 
-app.get('/', function(req, res){
-  headers['Content-Type'] = "text/html";
-  res.writeHead(200, headers);
-  var filename = path.join(__dirname, "../client/index.html");
-  var file = fs.readFileSync(filename, "utf8");
-  res.end(file);
-});
+var messagesById = _.indexBy(_.map(JSON.parse(fs.readFileSync(path.join(__dirname, "fixture.json"), "utf8")), function(message) {
+  message.createdAt = Date.now();
+  return message;
+}), 'id');
+
+var getUniqueId = function() {
+  var ids = Object.keys(messagesById);
+  ids.sort();
+  return _.last(ids) + 1;
+};
 
 app.get('/classes/messages', function(req, res){
-  headers['Content-Type'] = "text/html";
-  var filename = path.join(__dirname, "fixture.json");
-  var messages = JSON.parse(fs.readFileSync(filename, "utf8"));
-  var results = {results: messages};
-  res.end(JSON.stringify(results));
+  var messages = _.map(messagesById, function(message) {
+    return message;
+  });
+  res.type('application/json').status(200).json({results: messages});
+});
+
+app.post('/classes/messages', function(req, res){
+  var message = req.body;
+  message.id = getUniqueId();
+  message.createdAt = Date.now();
+  messagesById[message.id] = message;
+  res.type('application/json').status(201).json(message);
+});
+
+app.put('/classes/messages/:id', function(req, res){
+  var message = messagesById[req.params.id];
+  _.extend(message, req.body);
+  res.type('application/json').status(200).json(message);
+});
+
+app.delete('/classes/messages/:id', function(req, res){
+  var message = messagesById[req.params.id];
+  delete messagesById[req.params.id];
+  res.type('application/json').status(200).json(message);
 });
 
 app.use(express.static('client'));

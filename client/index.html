@@ -31,13 +31,13 @@
     </div>
 
     <script>
-      $(function(){
-        var messages = new Messages();
-        messages.load();
-        var formView = new FormView({el: $('#main'), collection: messages});
-        var messagesView = new MessagesView({el: $('#chats'), collection: messages});
-        setInterval(messages.load.bind(messages), 1000);
-      });
+      var messages = new Messages();
+      messages.load();
+      var main = $('#main');
+      var formView = new FormView({el: main, collection: messages});
+      var messagesView = new MessagesView({collection: messages});
+      main.append(messagesView.$el);
+      setInterval(messages.load.bind(messages), 1000);
     </script>
   </body>
 </html>

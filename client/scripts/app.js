@@ -1,7 +1,6 @@
 // Backbone refactor of the chatterbox
 
 var Message = Backbone.Model.extend({
-  url : 'classes/messages',
   defaults: {
     username: '',
     text: ''
@@ -10,15 +9,15 @@ var Message = Backbone.Model.extend({
 
 var Messages = Backbone.Collection.extend({
   model: Message,
-  url : 'classes/messages',
+  url : '/classes/messages',
 
   load: function(){
-    this.fetch({data: {order: '-createdAt'}});
+    //this.fetch({data: {order: '-createdAt'}});
+    this.fetch();
   },
 
   parse: function(response, options) {
-    // console.log(response.results);
-    var reversed = response.results.reverse()
+    var reversed = _.sortBy(response.results, 'createdAt');
     return reversed;
   }
 
@@ -47,8 +46,6 @@ var FormView = Backbone.View.extend({
     });
 
     $text.val('');
-    // var message = new Message(message);
-    // message.save();
   },
 
   stopSpinner: function(){
@@ -66,34 +63,35 @@ var FormView = Backbone.View.extend({
 
 var MessageView = Backbone.View.extend({
 
-  template: _.template('<div class="chat" data-id="<%- id %>"> \
+  template: _.template('<div class="chat"> \
                         <div class="user"><%- username %></div> \
                         <div class="text"><%- text %><div> \
                         <div>'),
 
   render: function(){
-    this.$el.html(this.template(this.model.attributes));  // {data: this.model.attributes}
+    this.$el.html(this.template(this.model.attributes));
     return this.$el;
   }
 });
 
 var MessagesView = Backbone.View.extend({
 
+  id: 'chats',
+
   initialize: function(){
-    this.collection.on('add', this.renderMessage, this);
+    this.collection.on('add change remove', this.render, this);
+    this.render();
   },
 
   render: function(){
-    // console.log(this.collection);
+    this.$el.empty();
     this.collection.each(this.renderMessage, this);
-    // console.log(this.collection.each(function(it){console.log(it);}))
   },
 
   renderMessage: function(message){
     var messageView = new MessageView({model: message});
     var $html = messageView.render();
     this.$el.prepend($html);
-    // console.log(messageView);
   }
 });
 
