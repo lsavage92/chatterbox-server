@@ -1,7 +1,7 @@
 // Backbone refactor of the chatterbox
 
 var Message = Backbone.Model.extend({
-  url : 'https://api.parse.com/1/classes/chatterbox/',
+  url : 'classes/messages',
   defaults: {
     username: '',
     text: ''
@@ -10,7 +10,7 @@ var Message = Backbone.Model.extend({
 
 var Messages = Backbone.Collection.extend({
   model: Message,
-  url : 'https://api.parse.com/1/classes/chatterbox/',
+  url : 'classes/messages',
 
   load: function(){
     this.fetch({data: {order: '-createdAt'}});
@@ -66,7 +66,7 @@ var FormView = Backbone.View.extend({
 
 var MessageView = Backbone.View.extend({
 
-  template: _.template('<div class="chat" data-id="<%- objectId %>"> \
+  template: _.template('<div class="chat" data-id="<%- id %>"> \
                         <div class="user"><%- username %></div> \
                         <div class="text"><%- text %><div> \
                         <div>'),
@@ -80,8 +80,7 @@ var MessageView = Backbone.View.extend({
 var MessagesView = Backbone.View.extend({
 
   initialize: function(){
-    this.collection.on('sync', this.render, this);
-
+    this.collection.on('add', this.renderMessage, this);
   },
 
   render: function(){

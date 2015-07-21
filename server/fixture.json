@@ -1,21 +1,26 @@
 [
   {
+    "id": 0,
     "username": "test",
     "text": "A message"
   },
   {
+    "id": 1,
     "username": "someOtherUser",
     "text": "Another Message"
   },
   {
+    "id": 2,
     "username": "Luke",
     "text": "A different message"
   },
   {
+    "id": 3,
     "username": "David",
     "text": "Hello world!!"
   },
   {
+    "id": 4,
     "username": "Random Bear",
     "text": "Rawr"
   }

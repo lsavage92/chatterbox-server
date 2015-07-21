@@ -37,7 +37,6 @@
         var formView = new FormView({el: $('#main'), collection: messages});
         var messagesView = new MessagesView({el: $('#chats'), collection: messages});
         setInterval(messages.load.bind(messages), 1000);
-
       });
     </script>
   </body>
